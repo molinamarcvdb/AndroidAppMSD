@@ -12,7 +12,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,14 +80,15 @@ public class MainActivity extends AppCompatActivity {
             startButton.setText("Stop");
             startCollectingData();
         } else {
+            stopCollectingData();
             addButton.setEnabled(true);
             resetButton.setEnabled(true);
             startButton.setText("Start");
-            stopCollectingData();
         }
     }
 
     private void startCollectingData() {
+        sensorHandler.getData().clear();
         for (Sensor sensor : selectedSensors) {
             sensorManager.registerListener(sensorHandler, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -91,6 +98,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopCollectingData() {
         sensorManager.unregisterListener(sensorHandler);
+
+        // upload data
+        List<DataObject> dataToUpload = sensorHandler.getData();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://10.0.0.17:8080/greeting";
+
+        TextView statusView = findViewById(R.id.statusLabel);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        statusView.setText("call successful: " + dataToUpload.size());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // do some error handling
+                statusView.setText("call failed: " + error.getMessage());
+            }
+        });
+
+        queue.add(stringRequest);
+
     }
 
 
