@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,8 +21,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -102,17 +106,26 @@ public class MainActivity extends AppCompatActivity {
         // upload data
         List<DataObject> dataToUpload = sensorHandler.getData();
 
+        for (DataObject dObj : dataToUpload) {
+            uploadData(dObj);
+        }
+    }
+
+    private void uploadData(DataObject dObj) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.0.0.17:8080/greeting";
 
         TextView statusView = findViewById(R.id.statusLabel);
+        String url = "http://192.168.251.215:8080/data";
+        Gson gson = new Gson();
+        String requestBody = gson.toJson(dObj);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        statusView.setText("call successful: " + dataToUpload.size());
+                        statusView.setText("call successful");
+                        // TODO Upload data
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -120,13 +133,20 @@ public class MainActivity extends AppCompatActivity {
                 // do some error handling
                 statusView.setText("call failed: " + error.getMessage());
             }
-        });
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return requestBody.getBytes(StandardCharsets.UTF_8);
+            }
+        };
 
         queue.add(stringRequest);
-
     }
-
-
 
     public void resetButtonClicked(View view) {
         selectedSensors.clear();

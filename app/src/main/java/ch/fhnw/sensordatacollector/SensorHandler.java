@@ -24,6 +24,7 @@ public class SensorHandler implements SensorEventListener {
 
         DataObject dObj = new DataObject();
 
+        dObj.setExperimentId(1l); // TODO: do not use fix value
         dObj.setSensorType(sensorEvent.sensor.getType());
         dObj.setSensorId(sensorEvent.sensor.getName());
         List<Float> data = new ArrayList<>();
