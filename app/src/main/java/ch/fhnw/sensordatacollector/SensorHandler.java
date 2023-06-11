@@ -12,9 +12,11 @@ import java.util.List;
 public class SensorHandler implements SensorEventListener {
 
     private List<DataObject> data = new ArrayList<>();
+    private long idCounter = 0; // Add this line
+    private Long experimentId; // Add this line
 
-    public SensorHandler() {
-        // setting up copnnection
+    public SensorHandler(Long experimentId) { // Modify the constructor
+        this.experimentId = experimentId;
     }
 
     @Override
@@ -24,7 +26,8 @@ public class SensorHandler implements SensorEventListener {
 
         DataObject dObj = new DataObject();
 
-        dObj.setExperimentId(1l); // TODO: do not use fix value
+        dObj.setId(idCounter++); // Set the id and increment the counter
+        dObj.setExperimentId(experimentId); // Use the experimentId from the constructor
         dObj.setSensorType(sensorEvent.sensor.getType());
         dObj.setSensorId(sensorEvent.sensor.getName());
         List<Float> data = new ArrayList<>();
@@ -46,6 +49,10 @@ public class SensorHandler implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    public void setExperimentId(Long experimentId) {
+        this.experimentId = experimentId;
     }
 
     public List<DataObject> getData() {

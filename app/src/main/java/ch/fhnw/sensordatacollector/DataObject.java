@@ -8,7 +8,6 @@ public class DataObject {
      * some comment about this varaible.
      */
     private Long id;
-
     private String device;
     private Long experimentId;
     private String experimentName;

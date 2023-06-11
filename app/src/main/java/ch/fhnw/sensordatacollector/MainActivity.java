@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.util.Log;
 
 
 import com.android.volley.AuthFailureError;
@@ -20,6 +22,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -33,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Sensor> selectedSensors = new ArrayList<>();
 
-    private SensorHandler sensorHandler = new SensorHandler();
+    private SensorHandler sensorHandler = new SensorHandler(1L);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
             addButton.setEnabled(false);
             resetButton.setEnabled(false);
             startButton.setText("Stop");
+
+            // Get the experiment name from the EditText
+            EditText experimentNameEditText = findViewById(R.id.experimentName);
+            String experimentName = experimentNameEditText.getText().toString();
+
+            // Create the experiment
+            createExperiment(experimentName);
+
             startCollectingData();
         } else {
             stopCollectingData();
@@ -91,7 +106,71 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void createExperiment(String name) {
+        // Instantiate the RequestQueue.
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        // Define the API endpoint URL.
+        String url = "http://10.0.2.2:8080/experiment?name=" + name;
+
+        // Create a request using StringRequest.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response from the server.
+                        // Get the experiment id
+                        getExperimentId(name);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error.
+                        handleUploadError(error);
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        requestQueue.add(stringRequest);
+    }
+
+    private void getExperimentId(String name) {
+        // Instantiate the RequestQueue.
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        // Define the API endpoint URL.
+        String url = "http://10.0.2.2:8080/experiment?name=" + name;
+
+        // Create a request using StringRequest.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the response from the server.
+                        // The response is the experiment id
+                        Long experimentId = Long.parseLong(response);
+
+                        // Set the experiment id for the data objects
+                        sensorHandler.setExperimentId(experimentId);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error.
+                        handleUploadError(error);
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        requestQueue.add(stringRequest);
+    }
+
+
+
     private void startCollectingData() {
+
         sensorHandler.getData().clear();
         for (Sensor sensor : selectedSensors) {
             sensorManager.registerListener(sensorHandler, sensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -99,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
     private void stopCollectingData() {
+
         sensorManager.unregisterListener(sensorHandler);
 
         // upload data
@@ -112,41 +191,67 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void uploadData(DataObject dObj) {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        // Instantiate the RequestQueue.
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        TextView statusView = findViewById(R.id.statusLabel);
-        String url = "http://192.168.251.215:8080/data";
-        Gson gson = new Gson();
-        String requestBody = gson.toJson(dObj);
+        // Define the API endpoint URL.
+        String url = "http://10.0.2.2:8080/data?experimentid=" + dObj.getExperimentId(); // Replace with your actual API endpoint URL.
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
+        Log.d("DataObject", "Sending DataObject with id: " + dObj.getDevice());
+
+        // Create a JSONObject and set the properties from the DataObject.
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", dObj.getId());
+            jsonObject.put("device", dObj.getDevice());
+            jsonObject.put("experimentId", dObj.getExperimentId());
+            jsonObject.put("experimentName", dObj.getExperimentName());
+            jsonObject.put("sensorId", dObj.getSensorId());
+            jsonObject.put("data", new JSONArray(dObj.getData()));
+            jsonObject.put("timestamp", dObj.getTimestamp());
+            jsonObject.put("accuracy", dObj.getAccuracy());
+            jsonObject.put("sensorType", dObj.getSensorType());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Create a request using JsonObjectRequest.
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        statusView.setText("call successful");
-                        // TODO Upload data
+                    public void onResponse(JSONObject response) {
+                        // Handle the response from the server.
+                        handleUploadSuccess(response.toString());
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // do some error handling
-                statusView.setText("call failed: " + error.getMessage());
-            }
-        }) {
-            @Override
-            public String getBodyContentType() {
-                return "application/json";
-            }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error.
+                        handleUploadError(error);
+                    }
+                });
 
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                return requestBody.getBytes(StandardCharsets.UTF_8);
-            }
-        };
-
-        queue.add(stringRequest);
+        // Add the request to the RequestQueue.
+        requestQueue.add(jsonObjectRequest);
     }
+
+
+
+    private void handleUploadSuccess(String response) {
+        // Handle the successful upload response here
+        // Update UI, display a success message, etc.
+        TextView statusView = findViewById(R.id.statusLabel);
+        statusView.setText("Upload successful");
+    }
+
+    private void handleUploadError(VolleyError error) {
+        // Handle the upload error here
+        // Update UI, display an error message, etc.
+        TextView statusView = findViewById(R.id.statusLabel);
+        statusView.setText("Upload failed: " + error.getMessage());
+    }
+
 
     public void resetButtonClicked(View view) {
         selectedSensors.clear();
