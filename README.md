@@ -54,10 +54,6 @@ These instructions will get you a copy of the project up and running on your loc
     git clone https://github.com/molinamarcvdb/AndroidAppMSD.git
     ```
 
-## Test and Deploy
-
-
-
 ***
 
 ## References
