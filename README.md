@@ -1,4 +1,4 @@
-# SensorDataCollectorApp MSD Project
+# Sensor Data Collector App MSD Project
 
 ## Description
 
