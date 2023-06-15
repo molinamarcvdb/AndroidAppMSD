@@ -21,14 +21,16 @@ The application leverages the accelerometer sensor on the android phone in
 order to detect if an older patient, or a patient with a walking impairment has 
 taken a fall, or if their condition and ability to walk is deteriorating over time. 
 One use case could be the monitoring of a patients gait in order to track their motor
-function recovery after a stroke for example(1). 
-
-Monitoring rehabilitation after an operation
+function recovery after a stroke for example(1). Monitoring rehabilitation after an operation
 concerning spinal-cord  injuries or lower limb amputations is also a possible
 use case for gait analysis (2). Patients with hip dysplasia, geriatric  disorders, or osteoarthritis
-could also be monitored to analyse effects of an intervention. Our application
-will focus on the detection of falls that a patient who has a walking impairment 
-may take, and to monitor their condition remotely. 
+could also be monitored to analyse effects of an intervention. 
+
+Our application will focus on the detection and monitoring of falls that a patient who has a walking impairment, or
+recovering from a surgery such as a hip replacement (hip prosthesis) may take, and to monitor their 
+condition remotely. In this way the clinician will be more informed about the rehabilitation process, and
+can make data driven decisions concerning interventions. 
+
 
 ## Features
 
