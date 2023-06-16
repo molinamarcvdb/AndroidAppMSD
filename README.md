@@ -47,7 +47,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Java 8 or higher
 - Maven
-- Android Environment 
+- Android Studio
 
 ### Installing
 
@@ -67,7 +67,7 @@ These instructions will get you a copy of the project up and running on your loc
     ```bash
     gradlew.bat installDebug
     ```
-5. Install the application on device or emulator
+5. Run the application on device or emulator
     ```bash
     gradlew.bat runDebug
     ```   
