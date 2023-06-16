@@ -47,7 +47,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Java 8 or higher
 - Maven
-- Android 
+- Android Environment 
 
 ### Installing
 
@@ -55,7 +55,23 @@ These instructions will get you a copy of the project up and running on your loc
     ```bash
     git clone https://github.com/molinamarcvdb/AndroidAppMSD.git
     ```
-
+2. Navigate to the project directory
+    ```bash
+    cd AndroidAppMSD
+    ```
+3. Build the project
+    ```bash
+    gradlew.bat assembleDebug
+    ```
+4. Install the application on device or emulator
+    ```bash
+    gradlew.bat installDebug
+    ```
+5. Install the application on device or emulator
+    ```bash
+    gradlew.bat runDebug
+    ```   
+    
 ***
 
 ## References
