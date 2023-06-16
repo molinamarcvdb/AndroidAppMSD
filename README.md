@@ -26,18 +26,18 @@ concerning spinal-cord  injuries or lower limb amputations is also a possible
 use case for gait analysis (2). Patients with hip dysplasia, geriatric  disorders, or osteoarthritis
 could also be monitored to analyse effects of an intervention. 
 
-Our application will focus on the detection and monitoring of falls that a patient who has a walking impairment, or
+Our application focuses on the detection and monitoring of falls that a patient who has a walking impairment, or
 recovering from a surgery such as a hip replacement (hip prosthesis) may take, and to monitor their 
 condition remotely. In this way the clinician will be more informed about the rehabilitation process, and
-can make data driven decisions concerning interventions. 
+can make data driven decisions concerning interventions. A key component of the application is the ability to detect
+falls in real-time. Future versions of the app could implement an alert system. There are two main parts to the applications funtionality, 
+the sensor data collection service and the sensor data collection application.  
+ 
+## Functionalities of Sensor Data Collection App:
 
-
-## Features
-
-1. Sensor data collection from accelerometer
-2. Store collected patient data
-3. Data analysis
-4. Send data to data collection service
+1. Collect sensor data
+2. Use accelerometer data to detect falls in real time
+6. Send data to data collection service
 
 ## Getting Started
 
