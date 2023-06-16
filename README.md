@@ -26,6 +26,8 @@ concerning spinal-cord  injuries or lower limb amputations is also a possible
 use case for gait analysis (2). Patients with hip dysplasia, geriatric  disorders, or osteoarthritis
 could also be monitored to analyse effects of an intervention. 
 
+Geriatric patients are especially prone to injury from falls due to frailty, and lower
+physiological reserve, which affects their ability to walk up stairs or tackle uneven ground(3).
 Our application focuses on the detection and monitoring of falls that a patient who has a walking impairment, or
 recovering from a surgery such as a hip replacement (hip prosthesis) may take, and to monitor their 
 condition remotely. In this way the clinician will be more informed about the rehabilitation process, and
@@ -78,6 +80,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. Moulaee Conradsson, D., & Bezuidenhout, L. J. (2022). Establishing Accelerometer Cut-Points to Classify Walking Speed in People Post Stroke. Sensors (Basel, Switzerland), 22(11), 4080. https://doi.org/10.3390/s22114080
 2. Jarchi, D., Pope, J., Lee, T. K. M., Tamjidi, L., Mirzaei, A., & Sanei, S. (2018). A Review on Accelerometry-Based Gait Analysis and Emerging Clinical Applications. IEEE reviews in biomedical engineering, 11, 177–194. https://doi.org/10.1109/RBME.2018.2807182
+3. Vaishya, R., & Vaish, A. (2020). Falls in Older Adults are Serious. Indian journal of orthopaedics, 54(1), 69–74. https://doi.org/10.1007/s43465-019-00037-x
 
 ## Authors and acknowledgment
 Marc Molina Van den Bosch, Caterina Montalbano, Lukasz Kaczmarek, Marco De Luca, Paul Stehberger, Paul Tanner
